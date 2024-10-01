@@ -12,58 +12,55 @@
   </head>
   <body>
     <center>
-    <h1>กำลังลงทะเบียน</h1>
-<p>กรุณารอสักครู่ หน้านี้จะปิดตัวลงหลังได้รับแจ้งเตือน</p>
-      </div>
+    <h1>ลงทะเบียนแจ้งเตือน</h1>
+<p>ใส่รหัสนักเรียน/นักศึกษา </p>
+<p>เพื่อรับแจ้งเตือนการเข้าเรียนทางไลน์</p>
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="inputPassword2" class="sr-only">ใส่รหัสนักเรียน</label>
+    <input type="text" class="form-control" id="stdid" placeholder="ใส่รหัสนักเรียน">
+  </div></br></br>
+  <div id="cin" class="visible"><button type="button" class="btn btn-success" onclick="letg()">เชื่อมต่อกับไลน์</button>
+<p id="tex1"></p>
 
-    </br>
+
 </center>
-
-
 
 <script>
 window.onload = function() {
-  //initializeLiff('1655620417-5dWDpmLl');
- initializeLiff('2006281858-eJyAywr8');
-
+//  initializeLiff('1655620417-5dWDpmLl');
+initializeLiff('2006281858-eJyAywr8');
 }
 
 function initializeLiff(myLiffId) {
-    liff
-        .init({
-            liffId: myLiffId
-        })
-        .then(() => {
-         letg();
-        })
-        .catch((err) => {
-        });
+    liff.init({liffId: myLiffId},function(){
+     
+      liff.ready.then(() => {
+        if (liff.isLoggedIn()) {
+          liff.getProfile().then(profile=>{
+            console.log(profile.userId)
+          })
+          console.log('login ok')
+      } else {
+        console.log('login notok')
+      liff.login();
+        }
+      })
+   })    
 }
-
-const xurl = "https://script.google.com/macros/s/AKfycbyi9eyGREuAX8c5F3hC1-v_AeQ9HYaSEbO3TxleoTM5mfDJRMH1kYFjjchAHvHFcPFM/exec";
-var myParam = window.location.search;
-var exc = myParam.split('code=')[1].split('&')[0];
-var excst = myParam.split('state=')[1].split('&')[0];
 
 function letg() {
-        liff.getProfile().then(function(profile) {
-        var uid = profile.userId;
-        var uname = profile.displayName;
-
-//alert(uid+'****'+exc+'****'+excst);
-        var xmlhttp = new XMLHttpRequest();
-        var theUrl = xurl+'?code='+exc+'&state='+excst+'&uid='+uid+'&uname='+uname;
-        xmlhttp.open('GET', theUrl);
-        xmlhttp.send();
-            xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var jsonResponse = JSON.parse(this.responseText);
-        }
-        alert(jsonResponse.desc);
-        liff.closeWindow();
-      }});  
+var x = document.getElementById("tex1");
+var x2 = document.getElementById("stdid").value;
+     liff.getProfile().then(function(profile) {
+            var uid = profile.userId;
+            var uname = profile.displayName;
+        var xos = liff.getOS();
+  x.innerHTML = "<br>StdId: " + x2+ 
+  "<br>userId: " + uid+ 
+  "<br>displayName: " + uname;
+window.location.replace('https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=y9ukZHDUUPfJdXhNxpUwrZ&redirect_uri=xxxx&scope=notify&state='+x2+'&stdid='+x2);
+      });  
 }
-
 
 
 
