@@ -28,6 +28,8 @@
     </style>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- LINE LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
 <body class="container mt-5">
 
@@ -64,6 +66,26 @@
         const noti_ClientId = "y9ukZHDUUPfJdXhNxpUwrZ";
         const noti_RedirectUrl = "https://krooluang.github.io/genToken/index.html";
         const appScriptUrl = "https://script.google.com/macros/s/AKfycbyDoZvcwI8hJlHyloA51VedLvWMZXHR7cx4va8Qd5jXAxXekuEUYv530jh51JNTzxpq/exec";
+        const liffId = "2006281858-p9YOYVgz";  // ใส่ LIFF ID ที่ได้จาก LINE Developer Console
+
+        // Initialize LIFF
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId });
+                if (!liff.isLoggedIn()) {
+                    liff.login(); // ถ้าไม่ได้ล็อกอิน ให้ทำการล็อกอิน
+                }
+                const profile = await liff.getProfile(); // ดึงข้อมูลโปรไฟล์ผู้ใช้
+                document.getElementById('studentName').value = profile.displayName; // กรอกชื่อผู้ใช้ลงในฟอร์ม
+            } catch (error) {
+                console.error('Error initializing LIFF:', error);
+            }
+        }
+
+        // Call LIFF initialization when the page loads
+        window.onload = function() {
+            initializeLiff();
+        };
 
         document.getElementById('studentForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent page reload
