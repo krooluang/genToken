@@ -75,8 +75,6 @@
                 if (!liff.isLoggedIn()) {
                     liff.login(); // ถ้าไม่ได้ล็อกอิน ให้ทำการล็อกอิน
                 }
-                const profile = await liff.getProfile(); // ดึงข้อมูลโปรไฟล์ผู้ใช้
-                document.getElementById('studentName').value = profile.displayName; // กรอกชื่อผู้ใช้ลงในฟอร์ม
             } catch (error) {
                 console.error('Error initializing LIFF:', error);
             }
