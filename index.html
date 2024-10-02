@@ -1,78 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+</head>
+<body>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <h2 style="color: blue;">ลงทะเบียนรับการแจ้งเตือน</h2>
 
-    <title>ITDEV.win</title>
-  </head>
-  <body>
-    <center>
-    <h1>ลงทะเบียนแจ้งเตือน</h1>
-<p>ใส่รหัสนักเรียน/นักศึกษา </p>
-<p>เพื่อรับแจ้งเตือนการเข้าเรียนทางไลน์</p>
-  <div class="form-group mx-sm-3 mb-2">
-    <label for="inputPassword2" class="sr-only">ใส่รหัสนักเรียน</label>
-    <input type="text" class="form-control" id="stdid" placeholder="ใส่รหัสนักเรียน">
-  </div></br></br>
-  <div id="cin" class="visible"><button type="button" class="btn btn-success" onclick="letg()">เชื่อมต่อกับไลน์</button>
-<p id="tex1"></p>
+    <form id="studentForm">
+        <label for="studentId" style="background: green;">รหัสนักเรียน:</label>
+        <input type="text" id="studentId" name="studentId" required><br><br>
+
+        <label for="studentName" style="background: green;">ชื่อนักเรียน:</label>
+        <input type="text" id="studentName" name="studentName" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="tokenDisplay" style="display:none;">
+        <h3>LINE Notify Token คือ</h3>
+        <p id="token"></p>
+    </div>
+
+    <script>
+        const noti_ClientId = "y9ukZHDUUPfJdXhNxpUwrZ"
+        const noti_RedirectUrl = "https://krooluang.github.io/genToken/index.html"
+        const appScriptUrl = "https://script.google.com/macros/s/AKfycbyDoZvcwI8hJlHyloA51VedLvWMZXHR7cx4va8Qd5jXAxXekuEUYv530jh51JNTzxpq/exec"
 
 
-</center>
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent page reload
 
-<script>
-window.onload = function() {
-//  initializeLiff('1655620417-5dWDpmLl');
-initializeLiff('2006281858-p9YOYVgz');
-}
+            const studentId = document.getElementById('studentId').value;
+            const studentName = document.getElementById('studentName').value;
 
-function initializeLiff(myLiffId) {
-    liff.init({liffId: myLiffId},function(){
-     
-      liff.ready.then(() => {
-        if (liff.isLoggedIn()) {
-          liff.getProfile().then(profile=>{
-            console.log(profile.userId)
-          })
-          console.log('login ok')
-      } else {
-        console.log('login notok')
-      liff.login();
+
+
+            if(studentId && studentName) {
+                const redirectUrl = `https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=${noti_ClientId}&redirect_uri=${noti_RedirectUrl}&scope=notify&state=${studentId}_${studentName}`;
+                window.location.href = redirectUrl;
+            } else {
+                alert('Please enter both Student ID and Name.');
+            }
+        });
+
+        function displayToken(token) {
+            document.getElementById('tokenDisplay').style.display = 'block';
+            document.getElementById('token').textContent = token;
         }
-      })
-   })    
-}
 
-function letg() {
-var x = document.getElementById("tex1");
-var x2 = document.getElementById("stdid").value;
-     liff.getProfile().then(function(profile) {
-            var uid = profile.userId;
-            var uname = profile.displayName;
-        var xos = liff.getOS();
-  x.innerHTML = "<br>StdId: " + x2+ 
-  "<br>userId: " + uid+ 
-  "<br>displayName: " + uname;
-window.location.replace('https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=y9ukZHDUUPfJdXhNxpUwrZ&redirect_uri=https://krooluang.github.io/genToken/index.html&scope=notify&state='+x2+'&stdid='+x2);
-      });  
-}
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('code')) {
+            const code = params.get('code');
+            const state = params.get('state');
 
-
-
-</script>
-
-
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-  </body>
+            fetch(appScriptUrl, {
+                method: 'POST',
+                body: JSON.stringify({ code, state }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayToken(data.token);
+            })
+            .catch(error => console.error('Error fetching token:', error));
+        }
+    </script>
+</body>
 </html>
