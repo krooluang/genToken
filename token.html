@@ -28,6 +28,9 @@
         <button type="button" class="btn btn-success" onclick="letg()">เชื่อมต่อกับไลน์</button>
         <p id="tex1"></p>
     </div>
+
+    <h1>กำลังลงทะเบียน</h1>
+    <p>กรุณารอสักครู่ หน้านี้จะปิดตัวลงหลังได้รับแจ้งเตือน</p>
 </center>
 
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -54,11 +57,32 @@ function initializeLiff(myLiffId) {
     });
 }
 
-function letg() {
+    function letg() {
+    var x = document.getElementById("tex1");
+    var x2 = document.getElementById("stdid").value;
+
+    liff.getProfile().then(function(profile) {
+        var uid = profile.userId;
+        var uname = profile.displayName;
+
+        x.innerHTML = "<br>StdId: " + x2 +
+            "<br>userId: " + uid +
+            "<br>displayName: " + uname;
+
+        // แสดงลิงก์ใน console เพื่อการตรวจสอบ
+        var redirectUrl = 'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=y9ukZHDUUPfJdXhNxpUwrZ&redirect_uri=https://krooluang.github.io/genToken/index.html&scope=notify&state=' + x2 + '&stdid=' + x2;
+        console.log(redirectUrl);
+
+        // เปลี่ยนเส้นทางไปยังลิงก์
+        window.location.replace(redirectUrl);
+    });
+}
+
+function xxletg() {
     var x = document.getElementById("tex1");
     var x2 = document.getElementById("stdid").value;
     var loading = document.getElementById("loading");
-    
+
     // แสดง loading spinner
     loading.style.display = "block";
 
@@ -81,9 +105,34 @@ function letg() {
             // ซ่อน loading spinner เมื่อสำเร็จ
             loading.style.display = "none";
 
-            // Redirect เมื่อกด "ตกลง"
-            window.location.replace('https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=y9ukZHDUUPfJdXhNxpUwrZ&redirect_uri=https://krooluang.github.io/genToken/token.html&scope=notify&state=' + x2 + '&stdid=' + x2);
+            // เริ่มกระบวนการส่งโค้ด
+            sendTokenToServer();
         });
+    });
+}
+
+function sendTokenToServer() {
+    const xurl = "https://script.google.com/macros/s/AKfycbwiY2wdEmft7NLbxUBpyi0B-l8lbYCl8gG1o5Qg_s3Vc4orwU3tsL5jo0b9ckm3zD3JZQ/exec";
+    var myParam = window.location.search;
+    var exc = myParam.split('code=')[1].split('&')[0];
+    var excst = myParam.split('state=')[1].split('&')[0];
+
+    liff.getProfile().then(function(profile) {
+        var uid = profile.userId;
+        var uname = profile.displayName;
+
+        var xmlhttp = new XMLHttpRequest();
+        var theUrl = xurl + '?code=' + exc + '&state=' + excst + '&uid=' + uid + '&uname=' + uname;
+        xmlhttp.open('GET', theUrl);
+        xmlhttp.send();
+
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var jsonResponse = JSON.parse(this.responseText);
+                alert(jsonResponse.desc);
+                liff.closeWindow();
+            }
+        };
     });
 }
 </script>
