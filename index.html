@@ -12,12 +12,25 @@
         body {
             font-family: 'Sarabun', sans-serif;
         }
+        /* Overlay for loading background */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* White background with 80% opacity */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Make sure it stays on top */
+        }
     </style>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="container mt-5">
-<div class="col-md-8 mx-auto">
+
     <h2 class="text-primary text-center">ลงทะเบียนรับการแจ้งเตือน</h2>
 
     <form id="studentForm" class="mt-4">
@@ -38,15 +51,15 @@
         <h3>LINE Notify Token คือ</h3>
         <p id="token"></p>
     </div>
- </div>
-    <!-- Loading Spinner -->
-    <div class="text-center" id="loadingSpinner" style="display:none;">
+
+    <!-- Loading Spinner Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner-border text-success" role="status">
             <span class="visually-hidden">กำลังบันทึกข้อมูล...</span>
         </div>
         <p>กำลังสร้างโทเค่น...</p>
     </div>
-   
+
     <script>
         const noti_ClientId = "y9ukZHDUUPfJdXhNxpUwrZ";
         const noti_RedirectUrl = "https://krooluang.github.io/genToken/index.html";
@@ -58,8 +71,8 @@
             const studentName = document.getElementById('studentName').value;
 
             if (studentId && studentName) {
-                // Show loading spinner
-                document.getElementById('loadingSpinner').style.display = 'block';
+                // Show loading overlay
+                document.getElementById('loadingOverlay').style.display = 'flex';
                 document.getElementById('submitButton').disabled = true;
 
                 const redirectUrl = `https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=${noti_ClientId}&redirect_uri=${noti_RedirectUrl}&scope=notify&state=${studentId}_${studentName}`;
@@ -74,7 +87,7 @@
         });
 
         function displayToken(token) {
-            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('tokenDisplay').style.display = 'block';
             document.getElementById('token').textContent = token;
             Swal.fire({
@@ -98,7 +111,7 @@
                 displayToken(data.token);
             })
             .catch(error => {
-                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('loadingOverlay').style.display = 'none';
                 Swal.fire({
                     icon: 'error',
                     title: 'เกิดข้อผิดพลาด',
