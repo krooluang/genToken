@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="container mt-5">
-
+<div class="col-md-8 mx-auto">
     <h2 class="text-primary text-center">ลงทะเบียนรับการแจ้งเตือน</h2>
 
     <form id="studentForm" class="mt-4">
@@ -38,7 +38,7 @@
         <h3>LINE Notify Token คือ</h3>
         <p id="token"></p>
     </div>
-
+ </div>
     <!-- Loading Spinner -->
     <div class="text-center" id="loadingSpinner" style="display:none;">
         <div class="spinner-border text-success" role="status">
@@ -46,7 +46,7 @@
         </div>
         <p>กำลังสร้างโทเค่น...</p>
     </div>
-
+   
     <script>
         const noti_ClientId = "y9ukZHDUUPfJdXhNxpUwrZ";
         const noti_RedirectUrl = "https://krooluang.github.io/genToken/index.html";
