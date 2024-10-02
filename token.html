@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <title>ITDEV.win</title>
+</head>
+<body>
+<center>
+    <h1>ลงทะเบียนแจ้งเตือน</h1>
+    <p>ใส่รหัสนักเรียน/นักศึกษา </p>
+    <p>เพื่อรับแจ้งเตือนการเข้าเรียนทางไลน์</p>
+    <div class="form-group mx-sm-3 mb-2">
+        <label for="inputPassword2" class="sr-only">ใส่รหัสนักเรียน</label>
+        <input type="text" class="form-control" id="stdid" placeholder="ใส่รหัสนักเรียน">
+    </div></br></br>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-border text-primary" role="status" id="loading" style="display: none;">
+        <span class="sr-only">Loading...</span>
+    </div>
+
+    <div id="cin" class="visible">
+        <button type="button" class="btn btn-success" onclick="letg()">เชื่อมต่อกับไลน์</button>
+        <p id="tex1"></p>
+    </div>
+</center>
+
+<script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+window.onload = function() {
+    initializeLiff('2006281858-p9YOYVgz');
+}
+
+function initializeLiff(myLiffId) {
+    liff.init({ liffId: myLiffId }, function() {
+        liff.ready.then(() => {
+            if (liff.isLoggedIn()) {
+                liff.getProfile().then(profile => {
+                    console.log(profile.userId);
+                });
+                console.log('login ok');
+            } else {
+                console.log('login notok');
+                liff.login();
+            }
+        });
+    });
+}
+
+function letg() {
+    var x = document.getElementById("tex1");
+    var x2 = document.getElementById("stdid").value;
+    var loading = document.getElementById("loading");
+    
+    // แสดง loading spinner
+    loading.style.display = "block";
+
+    liff.getProfile().then(function(profile) {
+        var uid = profile.userId;
+        var uname = profile.displayName;
+        var xos = liff.getOS();
+
+        x.innerHTML = "<br>StdId: " + x2 +
+            "<br>userId: " + uid +
+            "<br>displayName: " + uname;
+
+        // แสดง SweetAlert2 เมื่อสำเร็จ
+        Swal.fire({
+            icon: 'success',
+            title: 'เชื่อมต่อสำเร็จ',
+            text: 'คุณได้รับการเชื่อมต่อกับไลน์แล้ว!',
+            confirmButtonText: 'ตกลง'
+        }).then(() => {
+            // ซ่อน loading spinner เมื่อสำเร็จ
+            loading.style.display = "none";
+
+            // Redirect เมื่อกด "ตกลง"
+            window.location.replace('https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=y9ukZHDUUPfJdXhNxpUwrZ&redirect_uri=https://krooluang.github.io/genToken/token.html&scope=notify&state=' + x2 + '&stdid=' + x2);
+        });
+    });
+}
+</script>
+
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>
